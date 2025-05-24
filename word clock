@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Clock</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .clock-container {
+            text-align: center;
+            padding: 2rem;
+            max-width: 90vw;
+        }
+
+        .time-display {
+            font-size: clamp(3rem, 12vw, 8rem);
+            font-weight: 300;
+            line-height: 1.2;
+            letter-spacing: 0.02em;
+        }
+
+        @media (max-width: 768px) {
+            .time-display {
+                font-size: clamp(2rem, 10vw, 5rem);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="clock-container">
+        <div class="time-display" id="timeDisplay">
+            Loading...
+        </div>
+    </div>
+
+    <script>
+        const numberWords = {
+            1: 'one', 2: 'two', 3: 'three', 4: 'four', 5: 'five',
+            6: 'six', 7: 'seven', 8: 'eight', 9: 'nine', 10: 'ten',
+            11: 'eleven', 12: 'twelve'
+        };
+
+        function getTimeInWords() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            
+            // Convert to 12-hour format
+            const hour12 = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours;
+            const nextHour = hour12 === 12 ? 1 : hour12 + 1;
+            
+            let timeText = "";
+            
+            if (minutes === 0) {
+                timeText = `it's ${numberWords[hour12]} o'clock`;
+            } else if (minutes === 15) {
+                timeText = `it's quarter past ${numberWords[hour12]}`;
+            } else if (minutes === 30) {
+                timeText = `it's half past ${numberWords[hour12]}`;
+            } else if (minutes === 45) {
+                timeText = `it's quarter to ${numberWords[nextHour]}`;
+            } else {
+                if (minutes < 8) {
+                    timeText = `it's about ${numberWords[hour12]} o'clock`;
+                } else if (minutes < 23) {
+                    timeText = `it's about quarter past ${numberWords[hour12]}`;
+                } else if (minutes < 38) {
+                    timeText = `it's about half past ${numberWords[hour12]}`;
+                } else if (minutes < 53) {
+                    timeText = `it's about quarter to ${numberWords[nextHour]}`;
+                } else {
+                    timeText = `it's about ${numberWords[nextHour]} o'clock`;
+                }
+            }
+            
+            return timeText;
+        }
+
+        function updateClock() {
+            const timeDisplay = document.getElementById('timeDisplay');
+            const timeText = getTimeInWords();
+            timeDisplay.textContent = timeText;
+        }
+
+        // Update immediately and then every second
+        updateClock();
+        setInterval(updateClock, 1000);
+    </script>
+</body>
+</html>
